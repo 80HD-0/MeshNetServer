@@ -14,3 +14,7 @@ The number (if not -1) refers to the last packet index the client saw, so if pac
 # How do I use it?
 I'm working on a client that does the above, but it is currently non-functional.
 If you want to have a crack at making your own, be my guest.
+
+# How do I build it?
+I run VSCode, and as much as I hate not just giving you a makefile, it would be a waste of time for an unfinished project.
+With that said, if you want to use it I have builds in the releases, and you can always just use vscode.
