@@ -12,8 +12,7 @@ After each packet, it waits for the client to respond simply with the string "-1
 The number (if not -1) refers to the last packet index the client saw, so if packets 25 and 26 are dropped, the client reports 24, and the server will rewind to packet 24 and continue from there.
 
 # How do I use it?
-I'm working on a client that does the above, but it is currently non-functional.
-If you want to have a crack at making your own, be my guest.
+A basic client exists <a href="https://github.com/80HD-0/MeshNetClient">here</a>. It just grabs test.txt.
 
 # How do I build it?
 I run VSCode, and as much as I hate not just giving you a makefile, it would be a waste of time for an unfinished project.
