@@ -10,7 +10,7 @@
         "-Wall",
         "${workspaceFolder}/mns.c",
         "-o",
-        "${workspaceFolder}/build/Debug/outDebug"
+        "${workspaceFolder}/build/Debug"
       ],
       "group": {
         "kind": "build",

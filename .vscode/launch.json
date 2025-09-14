@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/mel/idk",
-      "program": "/home/mel/idk/build/Debug/outDebug",
+      "cwd": "/home/mel/MeshNetServer",
+      "program": "/home/mel/MeshNetServer/build/Debug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
