@@ -23,13 +23,13 @@ char readbuffer[2048] = {0};
 int main() {
     int version = 0;
     int release = 0;
-    int subrelease = 1;
+    int subrelease = 2;
     struct sigaction sa;
     sa.sa_handler = goodbye;
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = 0;
     sigaction(SIGINT, &sa, NULL);
-    printf("Starting up MeshNet Server version %i%i%i...\n", version, release, subrelease);
+    printf("Starting up MeshNet Server version %i.%i.%i...\n", version, release, subrelease);
     printf("Opening socket...\n");
     sock = socket(AF_INET, SOCK_DGRAM, 0);
     if (sock < 0) {
@@ -57,7 +57,6 @@ int main() {
         //its time for the big mamaaa
         ssize_t recv_len = recvfrom(sock, packet, sizeof(packet) -1, 0, (struct sockaddr*)&client_addr, &addr_len);
         if (recv_len < 0) {
-            printf("Packet length less than 0");
             continue;
         }
         packet[recv_len] = '\0';
@@ -96,12 +95,17 @@ int main() {
                     i = atoi(packet) - 1;
                     printf("Rewinding to %i due to packet drop", i);
                 } else if (recv_len < 0) {
-                    if (tries > 0) {
-                        tries--;
-                        ok = 1;
-                        printf("Resending packet %i due to timeout (%i tries left\n", i, tries);
-                    } else {
-                        break;
+                    if (ok > 0) {
+                        if (tries > 0) {
+                            tries--;
+                            ok = 1;
+                            printf("Resending packet %i due to timeout (%i tries left\n", i, tries);
+                        } else {
+                            break;
+                        }
+                    }
+                    else {
+                        continue;
                     }
                 } else if (atoi(packet) == -1) {
                     printf("Client said OK");
