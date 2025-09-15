@@ -5,6 +5,9 @@ Servers, whether many on one system or many on many systems, can operate as one,
 Public meshes can be made to act like torrents, with the so-called "buddy" system's port open, meaning users can help in serving files.
 Meshes will be able to share all their data to help with speed and redundancy, or each buddy can have its own set of files, meaning when a client asks for one, it will invisibly request from the buddy that has it.
 
+<br />
+<a href="https://trello.com/invite/b/68c7a84a4a505ffd33b44fd4/ATTI9e6f1db914ae9493f9fac9ccca7ae9b434536BBA/meshnetserver">Trello todo board</a>
+
 # What's its current state?
 Right now, almost none of the above features are implemented. Currently, it implements a reliable and fast file transfer method, but doesn't buddy yet.
 It sends 2052-byte packets to the client, containing a uint32 packet index (for reliability) and a 2kb payload. 
