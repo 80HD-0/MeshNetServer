@@ -17,6 +17,7 @@ const int maxtries = 3;
 int tries = maxtries;
 int ok = 1;
 int i = 0;
+int i2 = 0;
 uint32_t packetindex = 0;
 char outpacket[2052] = {0};
 char readbuffer[2048] = {0};
@@ -64,25 +65,33 @@ int main() {
         const char *connectionmessage = "MeshNet Connection Established\n";
         sendto(sock, connectionmessage, strlen(connectionmessage), 0, (struct sockaddr*)&client_addr, addr_len);
         if (strncmp(packet, "GET", 3) == 0) {
-            sendto(sock, "GET Recieved. Sending test.txt\n", 31, 0, (struct sockaddr*)&client_addr, addr_len);
-            FILE *test = fopen("test.txt", "rb");
-            if (!test) {
-                perror("Failed to open test.txt");
+            char *filenameparse = packet;
+            i2 = 0;
+            char *filename = strchr(filenameparse, ',');
+            if (filename != NULL) {
+                filename++;
+            }
+            char header[256];
+            FILE *file = fopen(filename, "rb");
+            if (!file) {
+                perror("Failed to open file.");
                 continue; // skip this request
             }
-            fseek(test, 0, SEEK_END);
-            long filesize = ftell(test);
-            rewind(test);
+            fseek(file, 0, SEEK_END);
+            long filesize = ftell(file);
+            rewind(file);
+            snprintf(header, sizeof(header), "%ld, Prepared to send", filesize);
+            sendto(sock, header, strlen(header), 0, (struct sockaddr*)&client_addr, addr_len);
             i = 0;
             ok = 1;
             tries = maxtries;
             while (ok > 0) {
-                fseek(test, 2048 * i, SEEK_SET);
-                ok = fread(readbuffer, 1, sizeof(readbuffer), test);
+                fseek(file, 2048 * i, SEEK_SET);
+                ok = fread(readbuffer, 1, sizeof(readbuffer), file);
                 packetindex = htonl(i);
                 memcpy(outpacket, &packetindex, 4);
                 memset(outpacket + 4, 0, 2048);
-                memcpy(outpacket + 4, readbuffer, 2048);
+                memcpy(outpacket + 4, readbuffer, ok);
                 sendto(sock, outpacket, ok + 4, 0, (struct sockaddr*)&client_addr, addr_len);
                 printf("%i bytes read\n", ok);
                 // read wether the client is ok or if he needs mental help
@@ -93,13 +102,13 @@ int main() {
                 if (recv_len > 0 && atoi(packet) != -1) {
                     ok = 1;
                     i = atoi(packet) - 1;
-                    printf("Rewinding to %i due to packet drop", i);
+                    printf("Rewinding to %i due to packet drop\n", i);
                 } else if (recv_len < 0) {
                     if (ok > 0) {
                         if (tries > 0) {
                             tries--;
                             ok = 1;
-                            printf("Resending packet %i due to timeout (%i tries left\n", i, tries);
+                            printf("Resending packet %i due to timeout (%i tries left)\n", i, tries);
                         } else {
                             break;
                         }
@@ -108,14 +117,15 @@ int main() {
                         continue;
                     }
                 } else if (atoi(packet) == -1) {
-                    printf("Client said OK");
+                    printf("Client said OK\n");
                     tries = maxtries;
                     i++;
                 } else {
-                    printf("tf");
+                    printf("tf\n");
                     break;
                 }
             }
+        fclose(file);
         }
     }
     return(0);
