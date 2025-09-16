@@ -70,6 +70,8 @@ int main() {
             char *filename = strchr(filenameparse, ',');
             if (filename != NULL) {
                 filename++;
+            } else {
+                filename = "test.txt";
             }
             char header[256];
             FILE *file = fopen(filename, "rb");
