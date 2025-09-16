@@ -23,8 +23,8 @@ char outpacket[2052] = {0};
 char readbuffer[2048] = {0};
 int main() {
     int version = 0;
-    int release = 0;
-    int subrelease = 2;
+    int release = 1;
+    int subrelease = 0;
     struct sigaction sa;
     sa.sa_handler = goodbye;
     sigemptyset(&sa.sa_mask);
