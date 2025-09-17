@@ -10,7 +10,8 @@
         "-Wall",
         "${workspaceFolder}/mns.c",
         "-o",
-        "${workspaceFolder}/build/Debug"
+        "${workspaceFolder}/build/Debug",
+        "-pthread",
       ],
       "group": {
         "kind": "build",
