@@ -18,7 +18,7 @@ struct clientinfo {
 
 void *sendfile(void *args) {
     struct clientinfo *inf = (struct clientinfo *)args;
-    const int maxtries = 3;
+    const int maxtries = 10;
     int tries = maxtries;
     int ok = 1;
     int i = 0;
@@ -57,8 +57,17 @@ void *sendfile(void *args) {
         sendto(sock, outpacket, ok + 4, 0, (struct sockaddr*)&inf->client_addr, inf->addr_len);
         printf("%i bytes read\n", ok);
         // read wether the client is ok or if he needs mental help
-        ssize_t recv_len = recvfrom(sock, inf->packet, sizeof(inf->packet) -1, 0, (struct sockaddr*)&inf->client_addr, &inf->addr_len);
+        struct sockaddr_in tmpa = inf->client_addr;
+        socklen_t tmpl = inf->addr_len;
+        char tmpp[1024] = {0};
+        ssize_t recv_len = recvfrom(sock, tmpp, sizeof(tmpp) -1, 0, (struct sockaddr*)&tmpa, &tmpl);
+
         if (recv_len >= 0) {
+            if (tmpa.sin_port == inf->client_addr.sin_port) {
+                memcpy(inf->packet, tmpp, sizeof(tmpp));
+            } else {
+                continue;
+            }
             inf->packet[recv_len] = '\0';
         }
         if (recv_len > 0 && atoi(inf->packet) != -1) {
